@@ -54,10 +54,10 @@ def generate_image(message, user_description):
     image_url = f"https://image.pollinations.ai/prompt/{formatted_description}"
 
     countdown_message = bot.send_message(
-        message.chat.id, f'Great 👌🏻 \n\n You requested {user_description}. The image quality, dimensions, etc., will be determined based on your description or the Oia version used ☂ \n\n Estimated time to generate the image is {15}s ⏳'
+        message.chat.id, f'Great 👌🏻 \n\n You requested {user_description}. The image quality, dimensions, etc., will be determined based on your description or the Oia version used ☂ \n\n Estimated time to generate the image is {3}s ⏳'
     )
 
-    for i in range(14, 0, -1):
+    for i in range(2, 0, -1):
         time.sleep(1)
         bot.edit_message_text(
             chat_id=message.chat.id,
