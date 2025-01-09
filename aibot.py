@@ -90,7 +90,12 @@ def generate_image(message, user_description):
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
     user_description = message.text
+    # التحقق من وجود أحرف عربية
+    if any('\u0600' <= char <= '\u06FF' or '\u0750' <= char <= '\u077F' or '\u08A0' <= char <= '\u08FF' for char in user_description):
+        bot.reply_to(message, "🚫اللغة العربية غير مدعومة. يرجى استخدام اللغة الإنجليزية.")
+        return
     generate_image(message, user_description)
+
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("regenerate:") or call.data.startswith("quality:") or call.data.startswith("quality_setting:") or call.data.startswith("version_setting:") or call.data in ["like", "dislike", "vip_unlock", "version", "back_to_main"])
 def callback_query(call):
