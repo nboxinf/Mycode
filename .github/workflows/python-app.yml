@@ -1,0 +1,30 @@
+name: Run Python Script
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '*/1 * * * *'  # تشغيل الكود كل 5 دقائق. يمكن تعديل الجدول الزمني حسب الحاجة.
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # اختر نسخة Python المناسبة
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # لتثبيت المكتبات المطلوبة
+
+    - name: Run Python Script
+      run: |
+        python aibot.py  # تأكد من كتابة اسم ملف الكود الخاص بك
