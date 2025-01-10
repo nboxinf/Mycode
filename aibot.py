@@ -11,7 +11,7 @@ adapter = HTTPAdapter(max_retries=retry)
 session.mount('http://', adapter)
 session.mount('https://', adapter)
 
-TOKEN = '7534275632:AAHcr-ycBx6zajAJCvxiIq4Ri3AYWQgugP4'
+TOKEN = '7753046159:AAFyhI1BhxeaBhqpyk9oO-Rs_D09KNRPg90'
 bot = telebot.TeleBot(TOKEN)
 
 user_descriptions_count = {}
@@ -23,7 +23,7 @@ version_settings = {}
 def send_welcome(message):
     name = message.from_user.first_name
     welcome_text = (
-        f"👋🏻 Welcome {name} \n\n✨ Create, imagine, and realize your ideas without limits!\n🔵 Enter any description that comes to your mind and we will transform it into an amazing image.\n🔵 No limits on creativity, every idea deserves to be realized!\n🔵 High quality and fast execution.\n\n💡 Start writing your idea now and we will turn it into a visual reality!\n\n⚙️ For orders and help: @imoslo\n🎉 Enjoy"
+        f"Welcome {name} 👋🏻 \n\n I am a bot developed by Oia using Oia-7 technology 💻 \n\n You can send the description you want. I support NSFW rights and can generate and process unethical images without restrictions. It is preferable to describe in English, and I will generate an image matching your description using AI 🧬 \n\n You have a maximum of 100 images per day, and you can subscribe to the VIP plan to get unlimited images 🌟"
     )
     
     markup = telebot.types.InlineKeyboardMarkup()
@@ -51,10 +51,10 @@ def generate_image(message, user_description):
     modified_description = user_description + dots + hyphens + quality + version
 
     formatted_description = modified_description.replace(' ', '%20')
+    image_url = f"https://image.pollinations.ai/prompt/{formatted_description}"
 
     countdown_message = bot.send_message(
-        message.chat.id,
-        f'Great 👌🏻 \n\n You requested {user_description}. The image quality, dimensions, etc., will be determined based on your description or the Oia version used ☂ \n\n Estimated time to generate the images is {3}s ⏳'
+        message.chat.id, f'Great 👌🏻 \n\n You requested {user_description}. The image quality, dimensions, etc., will be determined based on your description or the Oia version used ☂ \n\n Estimated time to generate the image is {3}s ⏳'
     )
 
     for i in range(2, 0, -1):
@@ -62,30 +62,17 @@ def generate_image(message, user_description):
         bot.edit_message_text(
             chat_id=message.chat.id,
             message_id=countdown_message.message_id,
-            text=f'Great 👌🏻 \n\n You requested {user_description}. The image quality, dimensions, etc., will be determined based on your description or the Oia version used ☂ \n\n Estimated time to generate the images is {i}s ⏳'
+            text=f'Great 👌🏻 \n\n You requested {user_description}. The image quality, dimensions, etc., will be determined based on your description or the Oia version used ☂ \n\n Estimated time to generate the image is {i}s ⏳'
         )
 
     time.sleep(1)
 
-    # توليد 4 صور مع تغييرات في seed
-    media_group = []
-    for i in range(4):
-        image_url = f"https://image.pollinations.ai/prompt/{formatted_description}&seed={i}"
-        response = session.get(image_url)
+    response = session.get(image_url)
 
-        if response.status_code == 200:
-            image_path = f'image_{i}.jpg'
-            with open(image_path, 'wb') as file:
-                file.write(response.content)
-            media_group.append(telebot.types.InputMediaPhoto(open(image_path, 'rb')))
-        else:
-            bot.reply_to(message, f'An error occurred while downloading image {i + 1}. Please try again.')
-
-    if media_group:
-        # إرسال الصور في ألبوم (Media Group)
-        bot.send_media_group(message.chat.id, media_group)
-
-        # إعداد الأزرار التفاعلية
+    if response.status_code == 200:
+        with open('image.jpg', 'wb') as file:
+            file.write(response.content)
+        
         markup = telebot.types.InlineKeyboardMarkup()
         like_button = telebot.types.InlineKeyboardButton("👍🏻", callback_data="like")
         dislike_button = telebot.types.InlineKeyboardButton("👎🏻", callback_data="dislike")
@@ -94,14 +81,11 @@ def generate_image(message, user_description):
         markup.row(like_button, dislike_button)
         markup.row(regenerate_button, quality_button)
 
-        # إرسال الأزرار مع رسالة منفصلة لتجنب تعارض مع ألبوم الصور
-        bot.send_message(message.chat.id, "What do you think about these images?", reply_markup=markup)
-
-        # حذف الصور بعد الإرسال
-        for i in range(4):
-            os.remove(f'image_{i}.jpg')
+        bot.send_photo(message.chat.id, open('image.jpg', 'rb'), reply_markup=markup)
+        
+        os.remove('image.jpg')
     else:
-        bot.reply_to(message, 'An error occurred while generating the images. Please try again later.')
+        bot.reply_to(message, 'An error occurred while downloading the image. Please try again with another description.')
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
@@ -164,8 +148,8 @@ def callback_query(call):
         version_settings[call.message.chat.id] = f" {version_setting}"
         name = call.from_user.first_name
         welcome_text = (
-            f"👋🏻 Welcome {name} \n\n✨ Create, imagine, and realize your ideas without limits!\n🔵 Enter any description that comes to your mind and we will transform it into an amazing image.\n🔵 No limits on creativity, every idea deserves to be realized!\n🔵 High quality and fast execution.\n\n💡 Start writing your idea now and we will turn it into a visual reality!\n\n⚙️ For orders and help: @imoslo\n🎉 Enjoy"
-    )
+            f"Welcome {name} 👋🏻 \n\n I am a bot developed by Oia using Oia-7 technology 💻 \n\n You can send the description you want. I support NSFW rights and can generate and process unethical images without restrictions. It is preferable to describe in English, and I will generate an image matching your description using AI 🧬 \n\n You have a maximum of 100 images per day, and you can subscribe to the VIP plan to get unlimited images 🌟"
+        )
         
         markup = telebot.types.InlineKeyboardMarkup()
         owner_button = telebot.types.InlineKeyboardButton("Owner ⚜", url="https://t.me/imoslo")
@@ -193,8 +177,8 @@ def callback_query(call):
     elif call.data == "back_to_main":
         name = call.from_user.first_name
         welcome_text = (
-            f"👋🏻 Welcome {name} \n\n✨ Create, imagine, and realize your ideas without limits!\n🔵 Enter any description that comes to your mind and we will transform it into an amazing image.\n🔵 No limits on creativity, every idea deserves to be realized!\n🔵 High quality and fast execution.\n\n💡 Start writing your idea now and we will turn it into a visual reality!\n\n⚙️ For orders and help: @imoslo\n🎉 Enjoy"
-    )
+            f"Welcome {name} 👋🏻 \n\n I am a bot developed by Oia using Oia-7 technology 💻 \n\n You can send the description you want. I support NSFW rights and can generate and process unethical images without restrictions. It is preferable to describe in English, and I will generate an image matching your description using AI 🧬 \n\n You have a maximum of 100 images per day, and you can subscribe to the VIP plan to get unlimited images 🌟"
+        )
         
         markup = telebot.types.InlineKeyboardMarkup()
         owner_button = telebot.types.InlineKeyboardButton("Owner ⚜", url="https://t.me/imoslo")
