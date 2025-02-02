@@ -85,7 +85,7 @@ def generate_image(message, user_description):
         
         os.remove('image.jpg')
     else:
-        bot.reply_to(message, 'An error occurred while downloading the image. Please try again with another description.')
+        bot.reply_to(message, '😵The server is full\n⌛️please wait until the server is reloaded.')
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
